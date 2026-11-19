@@ -49,8 +49,10 @@ def flowchart():
 
 def render(source):
     saved_style=(styles['Normal'].fontSize,styles['Normal'].leading)
+    saved_cell=(styles['Cell'].fontSize,styles['Cell'].leading)
     if source.stem=='ai-audit':
-        styles['Normal'].fontSize=9.5;styles['Normal'].leading=13
+        styles['Normal'].fontSize=9;styles['Normal'].leading=11.5
+        styles['Cell'].fontSize=7.5;styles['Cell'].leading=9.5
     lines=source.read_text(encoding='utf-8').splitlines();story=[];i=0
     while i<len(lines):
         line=lines[i].strip()
@@ -98,6 +100,7 @@ def render(source):
     assert '23120330' in ''.join(p.extract_text() or '' for p in reader.pages)
     print(f'{target}: {len(reader.pages)} pages')
     styles['Normal'].fontSize,styles['Normal'].leading=saved_style
+    styles['Cell'].fontSize,styles['Cell'].leading=saved_cell
 
 if __name__=='__main__':
     for name in ['main-report','ai-audit','ai-critique']:render(ROOT/'docs'/f'{name}.md')
