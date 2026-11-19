@@ -32,6 +32,8 @@ def analyze(folder):
             'http_failure_rate':sum(failures)/len(failures) if failures else None,
             'draft_p95_lt_500ms':percentile(durations)<500 if durations else None}
     counts = {m:sum(v for _,v,_ in samples[m]) for m in ['m5_started','m5_finished','m5_passed','m5_csv_exhausted','iterations','dropped_iterations']}
+    if not samples['dropped_iterations']:
+        counts['dropped_iterations'] = None
     report = {'run_id':manifest['run_id'],'window':'manifest start/end (includes k6 startup/export overhead)',
         'window_seconds':window,'endpoints':endpoints,'counts':counts,
         'unfinished_started_minus_finished':counts['m5_started']-counts['m5_finished'],

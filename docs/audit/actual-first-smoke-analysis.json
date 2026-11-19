@@ -1,0 +1,68 @@
+{
+  "run_id": "smoke-load-20261119-141451-dc433d78",
+  "window": "manifest start/end (includes k6 startup/export overhead)",
+  "window_seconds": 5.7435009479522705,
+  "endpoints": {
+    "register": {
+      "samples": 5,
+      "p95_ms": 24.71626,
+      "http_rps_wall_window": 0.8705491729365257,
+      "http_failure_numerator": 0,
+      "http_failure_denominator": 5,
+      "http_failure_rate": 0.0,
+      "draft_p95_lt_500ms": true
+    },
+    "forgot": {
+      "samples": 5,
+      "p95_ms": 5.53628,
+      "http_rps_wall_window": 0.8705491729365257,
+      "http_failure_numerator": 0,
+      "http_failure_denominator": 5,
+      "http_failure_rate": 0.0,
+      "draft_p95_lt_500ms": true
+    },
+    "reset": {
+      "samples": 5,
+      "p95_ms": 4.91606,
+      "http_rps_wall_window": 0.8705491729365257,
+      "http_failure_numerator": 0,
+      "http_failure_denominator": 5,
+      "http_failure_rate": 0.0,
+      "draft_p95_lt_500ms": true
+    },
+    "login": {
+      "samples": 5,
+      "p95_ms": 4.05164,
+      "http_rps_wall_window": 0.8705491729365257,
+      "http_failure_numerator": 0,
+      "http_failure_denominator": 5,
+      "http_failure_rate": 0.0,
+      "draft_p95_lt_500ms": true
+    },
+    "cart": {
+      "samples": 5,
+      "p95_ms": 3.07404,
+      "http_rps_wall_window": 0.8705491729365257,
+      "http_failure_numerator": 0,
+      "http_failure_denominator": 5,
+      "http_failure_rate": 0.0,
+      "draft_p95_lt_500ms": true
+    }
+  },
+  "counts": {
+    "m5_started": 5,
+    "m5_finished": 5,
+    "m5_passed": 5,
+    "m5_csv_exhausted": 0,
+    "iterations": 5,
+    "dropped_iterations": 0
+  },
+  "unfinished_started_minus_finished": 0,
+  "e2e_all_finalized_p95_ms": 43.39999999999999,
+  "e2e_success_only_p95_ms": 43.39999999999999,
+  "e2e_think_time_included": false,
+  "e2e_failure_rate_finalized": 0.0,
+  "e2e_success_throughput_wall_window": 0.8705491729365257,
+  "dropped_iterations_applicable": false,
+  "note": "Closed VU executors; absent dropped_iterations is not an observed arrival-rate guarantee."
+}
