@@ -51,7 +51,7 @@ Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa 
 |3 raw logs|Có raw.json nguyên định dạng k6, từng mẫu; không đổi đuôi thành .jtl|
 |3 HTML exports +3 views|Có; exports mở bằng Edge có đồ thị, views khác loại|
 |Soak 10-15phút|Xem test summary và raw riêng; không gọi maximum|
-|Ảnh tool+TaskManager mỗi run|**Thiếu**; quyền UI TaskManager chặn điều khiển agent|
+|Ảnh tool+TaskManager mỗi run|Đã có ba ảnh người dùng chụp, ghép đúng raw/HTML của các rerun bên dưới|
 |Hardware report/ảnh|Có; continuity hostname **chờ xác nhận**|
 |YouTube Unlisted >=6phút giọng sinh viên|**Thiếu**; chỉ có kịch bản7phút|
 |Public GitHub|**Thiếu**; chờ quyền push/public và URL thật|
@@ -62,3 +62,15 @@ Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa 
 K6 được đề cho phép nhưng checklist ZIP ghi .jtl. README này quy ước raw.json k6 là bằng chứng gốc theo mẫu tương ứng raw log; ba dashboard.html export tương ứng ba HTML report. Giữ đuôi file gốc. Chưa được cung cấp hướng dẫn Moodle riêng; **sinh viên cần kiểm tra quy ước nộp này**.
 
 Sau review cập nhật submission-state.json bằng dữ liệu thật, rồi `./scripts/package.ps1 -SelfAssessedGrade <0..100>` tạo `23120330_HW05_AI_Performance_<000..100>.zip`. Script không push/upload/nộp. Không tạo ZIP cuối trước khi có điểm đã duyệt.
+
+## Ba rerun có ảnh thật
+
+Kết quả gốc ở bảng trên được giữ nguyên. Bộ bổ sung sau có ba ảnh cùng khung hình và raw/HTML riêng. RPS thực thi loại thời gian đợi tab dashboard đóng; xem [phụ lục rerun](docs/evidence-reruns.md).
+
+| Profile | Run ID | E2E pass | p95 E2E ms | HTTP RPS thực thi | Files |
+|---|---|---|---|---|---|
+| Load | rerun-load-20261119-163449-813f2702 | 691 | 34.00 | 20.875 | [ảnh](results/rerun-load-20261119-163449-813f2702/load-k6-taskmanager.png), [raw](results/rerun-load-20261119-163449-813f2702/raw.json), [HTML](results/rerun-load-20261119-163449-813f2702/dashboard.html), [view](results/rerun-load-20261119-163449-813f2702/view.html) |
+| Stress | rerun-stress-20261119-164026-b02a7bbd | 2890 | 69.00 | 74.065 | [ảnh](results/rerun-stress-20261119-164026-b02a7bbd/stress-k6-taskmanager.png), [raw](results/rerun-stress-20261119-164026-b02a7bbd/raw.json), [HTML](results/rerun-stress-20261119-164026-b02a7bbd/dashboard.html), [view](results/rerun-stress-20261119-164026-b02a7bbd/view.html) |
+| Spike | rerun-spike-20261119-164621-7f96e5f6 | 1830 | 68.00 | 55.694 | [ảnh](results/rerun-spike-20261119-164621-7f96e5f6/spike-k6-taskmanager.png), [raw](results/rerun-spike-20261119-164621-7f96e5f6/raw.json), [HTML](results/rerun-spike-20261119-164621-7f96e5f6/dashboard.html), [view](results/rerun-spike-20261119-164621-7f96e5f6/view.html) |
+
+Spike rerun: throughput trở về gần baseline nhưng p95 hồi phục còn cao hơn baseline; chưa kết luận độ trễ hồi phục hoàn toàn. Chưa có video hoặc human review cuối.

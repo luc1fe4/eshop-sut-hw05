@@ -43,3 +43,15 @@ Phân tích sau raw chính thức: measurement-results.md là output AI thật �
 Các giả thuyết trên không phải kết luận nguyên nhân latency. Bổ sung kết quả chính thức và đối chiếu phase sau khi có đủ raw.
 
 Các công cụ bổ sung đã dùng thật: matplotlib, reportlab, pypdf, Pillow, PyYAML validator, statistics stdlib, Poppler pdftoppm và Edge headless qua Playwright bundled. Phiên bản thực tế đọc từ metadata trong tool-versions.txt; bộ pip Playwright mới tải lâu đã hủy và không được dùng. Skill replay sau khi đọc SKILL.md đã chạy lúc14:46:18+07, 5/5E2E pass, run skill-demo-load-20261119-144618-45deee1a; chưa có video.
+
+## Tiếp tục thu bằng chứng thật - 2026-11-19
+
+File yêu cầu/đánh giá người dùng gửi được lưu nguyên nội dung tại audit/20261119-user-followup-and-assessment.txt. Các tin nhắn thật tiếp theo gồm “chạy lại loadd”, “đã đóng” và các ảnh người dùng gửi. Không có timestamp gửi chính xác được cung cấp, nên giờ lưu/import ảnh không được nhận là giờ người dùng gửi. Nguồn ảnh, tên file gốc, SHA256 và copied_at nằm trong screenshot-evidence.json từng rerun.
+
+Người dùng đã chụp ba ảnh cùng khung: Load trong hold5VU, Stress trong hold15VU, Spike trong peak40VU; PID32692, CPU/Memory rõ. Agent sao nguyên byte và liên kết từng ảnh đúng raw/HTML của run. Đây là hành động cung cấp bằng chứng, không tự suy thành human duyệt assertions, critique, hostname hoặc điểm.
+
+Rerun Load691E2E, Stress2890E2E, Spike1830E2E đều exit0. Raw p95 đối chiếu độc lập; số liệu và giới hạn đầy đủ trong evidence-reruns.md. Rerun dùng scenario.startTime trực tiếp; analyzer bổ sung mẫu số thực thi từ state.testRunDurationMs vì wall có thời gian chờ tab dashboard. Resource sampler ngoài execution window được giữ raw nhưng loại khỏi thống kê rerun. Agent có lần gọi analyzer trước summary hoàn tất, nhận KeyError:end; đã kiểm tra trạng thái completed trước phân tích tiếp, không coi đó là lỗi SUT.
+
+Stress còn kết nối localhost5665 từ in-app browser sau khi Chrome đóng. Agent dùng browser API xác minh đúng trang k6 và đóng riêng tab đó; không thao tác UI ChatGPT hoặc vượt TaskManager higher integrity. Cơ chế Windows Computer Use từng bị dừng vì không xác minh được URL đã được tuân thủ ở lượt trước; thao tác lần này trên browser connector cung cấp URL/DOM rõ.
+
+Phân tích Spike mới chỉ hỗ trợ throughput hồi phục gần baseline; E2Ep95 recovery77ms cao hơn baseline48.05ms. Không lặp lại kết luận latency hồi phục của run cũ cho run mới; chưa đủ kết luận nguyên nhân hoặc issue hiệu năng. Hai phát hiện chức năng và0Issue đã đăng giữ nguyên. Agent đổi từ “missing” thành “authentic” trong critique draft khi ba ảnh đã có, giữ248words; chưa có sinh viên duyệt. Transcript toàn bộ vẫn chưa đầy đủ, không tái dựng.

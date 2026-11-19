@@ -1,6 +1,6 @@
 # Evidence checklist and Vietnamese recording script
 
-Đã chạy Load/Stress/Spike chính thức, soak5VU/10phút đã hoàn tất; xem measurement-results.md và manifest để biết trạng thái mới nhất. Đã có ảnh dxdiag thật và ảnh HTML QA headless, **chưa có ảnh từng run k6+TaskManager cùng khung hình hay video**. Máy đo Windows hostname Phuc; sinh viên phản hồi còn cần kiểm tra khớp bài trước. Không sử dụng screenshot giả hay môi trường khác để thay bằng chứng Windows.
+Đã chạy Load/Stress/Spike chính thức, soak5VU/10phút đã hoàn tất; xem measurement-results.md và manifest để biết trạng thái mới nhất. Đã có ảnh dxdiag thật và ảnh HTML QA headless, đã có ba ảnh k6+TaskManager của các rerun do người dùng chụp; **chưa có video**. Máy đo Windows hostname Phuc; sinh viên phản hồi còn cần kiểm tra khớp bài trước. Không sử dụng screenshot giả hay môi trường khác để thay bằng chứng Windows.
 
 ## Chạy lại bằng PowerShell
 
@@ -49,3 +49,5 @@ Runner bật dashboard export với period=1s, mặc định port=-1 để tự 
 06:30-07:00: AI audit, sai sót thực sự, human review đã nhận và flowchart pipeline. Chỉ đưa số liệu đã đối chiếu, không đọc mẫu giả. Người dùng tự thuyết minh và cung cấp link Unlisted thật.
 
 Skill replay thực tế sau khi tạo skill: skill-demo-load-20261119-144618-45deee1a, 5/5 E2E pass, 25requests, exit0. Chưa có video/giọng thuyết minh của sinh viên.
+
+Đợt rerun có ảnh: xem evidence-reruns.md và resource_screenshot_runs trong submission-state.json. Stress5665 từng còn tab preview in-app giữ kết nối sau khi Chrome đóng; agent đã đóng đúng localhost preview bằng browser API. Spike dùng5666. Trước video lần tới, chỉ mở một tab live và đóng sau khi quay để k6 xuất summary; đọc số liệu theo execution window.

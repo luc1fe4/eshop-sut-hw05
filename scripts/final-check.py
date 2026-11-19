@@ -47,12 +47,17 @@ for profile,relative in state['resource_screenshots'].items():
     assert verification['all_p95_match']
     assert (folder/'dashboard.html').exists() and (folder/'view.html').exists()
     photo_checks.append({'profile':profile,'run_id':proof['run_id'],'image':relative,'sha256_verified':True,'completed_raw_matched':True})
-for directory in ['docs','plans','skills','output/pdf','data','results']:
+for directory in ['docs','plans','scripts','skills','output/pdf','data','results']:
     for path in (root/directory).rglob('*'):
-        if not path.is_file() or path.name in ['artifact-inventory.json','final-check.json']:continue
+        if not path.is_file() or '__pycache__' in path.parts or path.name in ['artifact-inventory.json','final-check.json','final-check-launch.txt']:continue
         with path.open('rb') as f:
             digest=hashlib.file_digest(f,'sha256').hexdigest()
         inventory.append({'path':str(path.relative_to(root)),'bytes':path.stat().st_size,'sha256':digest})
+for name in ['README.md','submission-state.json','git-commit-log.txt']:
+    path=root/name
+    if path.exists():
+        with path.open('rb') as f:digest=hashlib.file_digest(f,'sha256').hexdigest()
+        inventory.append({'path':name,'bytes':path.stat().st_size,'sha256':digest})
 (root/'results/artifact-inventory.json').write_text(json.dumps(inventory,indent=2),encoding='utf-8')
 result={'technical_artifact_checks_passed':True,'submission_complete':False,
         'runs':runs,'pdf_pages':pdfs,'resource_photo_checks':photo_checks,
