@@ -27,7 +27,7 @@ foreach ($path in @('README.md','submission-state.json','git-commit-log.txt','do
  Copy-Item -LiteralPath $source -Destination $target -Recurse
 }
 $manifests = Get-ChildItem (Join-Path $root 'results') -Filter manifest.json -Recurse | ForEach-Object { Get-Content $_.FullName -Raw | ConvertFrom-Json }
-$chosen = @($manifests | Where-Object { $_.status -eq 'completed' -and $_.kind -in @('official','soak','skill-demo','smoke','pilot') })
+$chosen = @($manifests | Where-Object { $_.status -eq 'completed' -and $_.kind -in @('official','soak','skill-demo','smoke','pilot','rerun') })
 New-Item -ItemType Directory -Path (Join-Path $staging 'results'),(Join-Path $staging 'data') -Force | Out-Null
 foreach ($run in $chosen) {
  Copy-Item -LiteralPath (Join-Path $root "results/$($run.run_id)") -Destination (Join-Path $staging 'results') -Recurse

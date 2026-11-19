@@ -9,9 +9,12 @@
   "full_chat_export_attached": false,
   "k6_raw_json_submission_convention_confirmed": false,
   "resource_screenshots": {
-    "Load": null,
+    "Load": "results/rerun-load-20261119-163449-813f2702/load-k6-taskmanager.png",
     "Stress": null,
     "Spike": null
   },
-  "note": "False/null means pending, not a claimed negative review. Update only from real evidence and user responses."
+  "note": "False/null means pending, not a claimed negative review. Update only from real evidence and user responses.",
+  "resource_screenshot_runs": {
+    "Load": "rerun-load-20261119-163449-813f2702"
+  }
 }

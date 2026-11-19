@@ -21,7 +21,10 @@ K6 có thể đợi tab dashboard sau khi workload kết thúc. Không lấy th�
 | Profile | Run ID | Trạng thái | Ảnh cùng khung |
 |---|---|---|---|
 | Load | rerun-load-20261119-162216-d7ab78da | Workload kết thúc; đang đợi dashboard để hoàn tất artifacts | Chưa nhận ảnh đủ dashboard+TaskManager |
+| Load - ảnh trong hold | rerun-load-20261119-163449-813f2702 | CLI báo 691 complete/0 interrupted, 2m45s; đang đợi tab đóng để có summary | Đã nhận load-k6-taskmanager.png, chart tới khoảng16:36:10 trong vùng hold, PID32692/CPU/Memory rõ |
 | Stress | Chưa chạy | Đợi cổng5665 của Load được giải phóng | Chưa có |
 | Spike | Chưa chạy | Sau Stress | Chưa có |
 
 Ảnh người dùng đã gửi được giữ nguyên byte trong results/evidence-support/taskmanager-selected-pid-32692.png và dashboard-before-rerun-connection-refused.png. Đây là ảnh hỗ trợ chẩn đoán, không đánh dấu resource_screenshots.Load/Stress/Spike=true từ hai ảnh này. Timestamp import không phải timestamp chụp.
+
+Ảnh Load mới hợp lệ được người dùng gửi từ codex-clipboard-7229886a-05c8-4679-bbfc-199d4ea80511.png. Đã sao nguyên byte vào results/rerun-load-20261119-163449-813f2702/load-k6-taskmanager.png; metadata và SHA256 trong screenshot-evidence.json. submission-state.json liên kết ảnh với đúng rerun qua resource_screenshot_runs.Load. Card25/s là snapshot, không phải RPS tổng run. Task Manager CPU00 là giá trị hiển thị được làm tròn, không được diễn giải là không sử dụng CPU. Đây là agent kiểm tra bằng chứng, không phải sinh viên duyệt toàn bộ báo cáo/critique.
