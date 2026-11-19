@@ -1,6 +1,6 @@
 param(
   [ValidateSet('Load','Stress','Spike')][string]$Profile = 'Load',
-  [ValidateSet('smoke','pilot','official','rerun','soak')][string]$Kind = 'smoke',
+  [ValidateSet('smoke','pilot','official','rerun','soak','skill-demo')][string]$Kind = 'smoke',
   [int]$Rows = 20000,
   [string]$StagesJson = '',
   [int]$Vus = 5,
@@ -20,7 +20,7 @@ if ($LASTEXITCODE -ne 0) { throw 'CSV generation failed' }
 $env:RUN_ID = $runId
 $env:CSV_PATH = $csv
 $env:BASE_URL = 'http://127.0.0.1:3000'
-$env:MODE = if ($Kind -eq 'smoke') {'smoke'} elseif ($Kind -eq 'soak') {'soak'} else {'profile'}
+$env:MODE = if ($Kind -in @('smoke','skill-demo')) {'smoke'} elseif ($Kind -eq 'soak') {'soak'} else {'profile'}
 $env:STAGES_JSON = $StagesJson
 $env:VUS = "$Vus"
 $env:DURATION = $Duration
