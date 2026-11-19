@@ -1,0 +1,167 @@
+Tiếp tục hoàn thiện HW05-AI của MSSV 23120330 trong repo hiện tại.
+
+Đọc đề bài, hướng dẫn repo, Git status, hw05-m5/README.md,
+submission-state.json, Git log và các báo cáo trước khi sửa.
+Giữ nguyên dữ liệu, raw logs và lịch sử đã có.
+
+Mục tiêu: khép các mục còn thiếu bằng công việc và bằng chứng thật.
+Không bỏ qua kiểm soát quyền, không giả ảnh/log/transcript/review,
+không tạo giọng sinh viên bằng TTS, không tự đặt link hoặc điểm.
+
+1. Kiểm kê và sửa nhận định
+- Đối chiếu bản đánh giá với đề gốc; bản đánh giá không tự động là
+  human review hoặc điểm tự chấm đã được tôi duyệt.
+- Task 3 chỉ yêu cầu proposal: không coi chưa triển khai CI là thiếu
+  implementation bắt buộc.
+- Không tạo thêm lỗi AI để đạt một số lượng misinterpretation tùy ý.
+- Giữ phân biệt “mức ổn định đã thử” và “ngưỡng tối đa”.
+
+2. Thu ảnh Windows thật
+- Kiểm tra backend, PID, cổng và DB test riêng trước khi chạy.
+- Chạy lại Load, Stress, Spike với namespace CSV và run ID mới.
+- Thu ảnh thật khi k6 đang chạy: dashboard/CLI và Task Manager
+  hiển thị PID
+# Đánh giá Bài làm HW05 — Performance Testing (MSSV: 23120330)
+
+> **Vai trò:** Học sinh tự đánh giá bài làm của mình dựa trên yêu cầu đề bài.
+> **Ngày đánh giá:** 2026-11-19
+
+---
+
+## Tổng quan nhanh
+
+| Tiêu chí | Điểm tối đa | Ước tính | Ghi chú |
+|---|---|---|---|
+| Task 1 — Load testing | 30 | ~20–24 | Có raw/HTML/view; **thiếu ảnh k6+TaskManager cùng khung** |
+| Task 1 — Stress testing | 20 | ~13–16 | Có staged Stress; **ngưỡng tối đa chưa tìm được** |
+| Task 1 — Spike testing | 20 | ~13–16 | Có baseline/peak/recovery; **thiếu ảnh cùng khung** |
+| Task 2 — AI analysis + misinterpretation hunt | 10 | ~6–8 | Có 2 lỗi thật được hunt; audit chưa có full transcript |
+| Task 3 — Continuous Testing proposal | 10 | ~6–8 | Có flowchart Mermaid và phân tích; chưa triển khai thật |
+| Agent Skills | 10 | ~5–7 | SKILL.md có; replay 5/5 pass; **video demo chưa có** |
+| **Tổng** | **100** | **~63–79** | Phụ thuộc review cuối |
+
+> [!WARNING]
+> Đây là **ước tính sơ bộ** từ người học tự chấm, **chưa phải điểm chính thức**. Nhiều hạng mục còn thiếu bằng chứng bắt buộc theo đề bài (ảnh cùng khung, video YouTube Unlisted, public GitHub).
+
+---
+
+## Phân tích chi tiết từng tiêu chí
+
+### ✅ Task 1 — Load Testing (30đ)
+
+**Những gì đã làm được:**
+- Chạy workflow 5 bước: Register → Forgot → Reset → Login → GET Cart, bao phủ đủ 3 nhóm (auth-heavy, transactional, read-heavy).
+- Dữ liệu hóa bằng CSV (SharedArray, namespace mới mỗi run, không quay vòng).
+- Load: **682/682 E2E pass**, p95 E2E = 62ms, HTTP RPS = 20.429, 0 lỗi.
+- Stress: **2864/2864 E2E pass**, 3 bậc (5/15/30 VU), p95 E2E = 100ms, 0 lỗi.
+- Spike: **1810/1810 E2E pass**, baseline→peak(40 VU)→recovery, 0 lỗi.
+- Soak: **5 VU × 10 phút**, 2858/2858 pass, p95 E2E = 67ms — đáp ứng yêu cầu endurance.
+- 3 loại report view khác nhau (bảng endpoint / stage chart / spike timeline).
+- Tên file test plan đúng quy ước: 23120330_Load_20261119.js, 23120330_Stress_20261119.js, 23120330_Spike_20261119.js.
+- Thông tin phần cứng: dxdiag thật, hardware.json (hostname: PHUC).
+
+**Những gì còn thiếu / yếu:**
+- ❌ **Ảnh k6 + Task Manager cùng khung hình** cho từng run (Load/Stress/Spike) — đây là yêu cầu bắt buộc theo mục 11 Anti-AI-Cheat.
+- ⚠️ Hostname continuity với bài trước chưa được xác nhận.
+- ⚠️ Stress **chưa tìm được bậc lỗi đầu tiên** (cả 3 bậc đều pass guardrail), nên chưa xác định ngưỡng bão hòa thực sự.
+- ⚠️ Soak ghi nhận mức ổn định (5 VU / 23.7 RPS) nhưng **chưa tìm được ngưỡng tối đa** (đề bài yêu cầu "empirically find your hardware's threshold").
+- ⚠️ Raw log là raw.json (k6) thay vì .jtl (JMeter). K6 được phép nhưng cần xác nhận quy ước nộp Moodle.
+
+---
+
+### ✅ Task 2 — AI Analysis + Misinterpretation Hunt (10đ)
+
+**Những gì đã làm được:**
+- **2 lỗi AI thực sự được phát hiện và ghi chép** với giá trị đúng từ raw log:
+  1. dropped_iterations = 0 (AI sum tập rỗng thành 0, nhầm với "đo được 0 drop") → Sửa: xuất null + observed=false.
+  2. start_seconds = 30 lệch do first iteration trễ → Sửa: dùng clock suy ra từ VU gauge.
+- **5 đề xuất tối ưu được phân loại** (feasible/hallucinated) với kiểm chứng từ source code:
+  - email index → Feasible, cần A/B.
+  - SQLite WAL → Feasible có điều kiện.
+  - SQL connection pool → **Hallucinated** (SQLite không hỗ trợ nhiều writer).
+  - Password hashing optimization → **Hallucinated** (SUT dùng plaintext, không có hashing cost).
+  - Tránh DROP seed khi startup → Feasible về vận hành.
+- Phân tích độc lập p95 bằng Python statistics.quantiles khớp summary k6.
+
+**Những gì còn thiếu / yếu:**
+- ⚠️ AI Audit chưa có **full transcript** export (chỉ có trích đoạn prompt).
+- ⚠️ AI Critique (248 chữ) còn ở trạng thái **draft, chưa được sinh viên duyệt**.
+- ⚠️ Chỉ có 2 lỗi hunt — số lượng ít, nhưng nếu là lỗi thật và được giải thích rõ thì vẫn có giá trị.
+
+---
+
+### ✅ Task 3 — Continuous Performance Testing Proposal (10đ)
+
+**Những gì đã làm được:**
+- Có **flowchart Mermaid** đầy đủ trong docs/pipeline-proposal.md và main-report.md:
+  - Phân tích commit → kích hoạt smoke/load/stress theo điều kiện.
+  - Regression rule cụ thể: p95 tăng >20% VÀ >10ms, xuất hiện ≥2/3 lần.
+  - Xem xét false alarm, baseline management, artifact retention.
+- Thảo luận trade-offs: chi phí CI, nhiễu từ runner, DB cardinality, false alarm.
+- Phân tầng lịch: smoke/commit → load/PR → stress-spike/nightly → soak/scheduled.
+
+**Những gì còn thiếu / yếu:**
+- ⚠️ Chưa triển khai thực tế (CI pipeline). Đây là proposal, không phải implementation — đề bài chỉ yêu cầu "propose" nên có thể chấp nhận được.
+- ⚠️ Flowchart dùng tiếng Việt không dấu (render Mermaid) — đọc được nhưng kém chuyên nghiệp.
+
+---
+
+### ✅ Agent Skills (10đ)
+
+**Những gì đã làm được:**
+- **skills/k6-workflow-audit/SKILL.md** tồn tại, có hướng dẫn tái sử dụng rõ ràng.
+- Skill replay thực tế: skill-demo-load-20261119-144618-45deee1a, **5/5 E2E pass**, 25 requests, exit 0.
+- SKILL.md bao gồm: contract, data-driven CSV, smoke-first workflow, audit AI analysis, misinterpretation hunt.
+
+**Những gì còn thiếu / yếu:**
+- ❌ **Chưa có video demo skill** (đề bài yêu cầu YouTube link cho agent skill).
+- ⚠️ Đoạn video skill (05:00–06:30) mới là kịch bản dự kiến, chưa quay.
+
+---
+
+## Những yêu cầu bắt buộc còn THIẾU (Anti-AI-Cheat)
+
+> [!CAUTION]
+> Các mục dưới đây là **yêu cầu bắt buộc** theo mục 11 và 14 đề bài. Thiếu có thể dẫn đến trừ điểm nặng hoặc 0 điểm theo mục "Missing any required document → 0 points".
+
+| Yêu cầu bắt buộc | Trạng thái | Mức độ rủi ro |
+|---|---|---|
+| Ảnh k6 + Task Manager cùng khung cho mỗi run | ❌ THIẾU | 🔴 Cao |
+| Video YouTube Unlisted ≥6 phút có giọng thuyết minh tiếng Việt | ❌ THIẾU | 🔴 Cao |
+| Public GitHub repository URL | ❌ THIẾU (chờ push) | 🔴 Cao |
+| GitHub Issues đã đăng (2 bug draft chưa post) | ❌ 0 issue posted | 🟡 Trung bình |
+| Full transcript AI Audit | ⚠️ Chưa đầy đủ | 🟡 Trung bình |
+| Hostname continuity với bài trước | ⚠️ Chưa xác nhận | 🟡 Trung bình |
+| ZIP đúng tên với self-assessed grade | ❌ Chưa tạo | 🔴 Cao (nộp) |
+| Self-assessed grade (bảng) | ❌ Chưa điền | 🟠 Cần làm |
+
+---
+
+## Những điểm mạnh nổi bật
+
+1. **Quy trình nghiêm túc, minh bạch:** Phân biệt rõ smoke / pilot / official / soak; không pha kết quả failed vào success; ghi hạn chế rõ ràng ("đây là mức đã kiểm chứng, không phải ngưỡng tối đa").
+2. **Workflow E2E hoàn chỉnh:** 5 bước liên tiếp có correlation token/JWT giữa các step, không lặp credential, không log secret.
+3. **Phát hiện bug có giá trị:** OTP 4 chữ số thay vì 6, và login response lộ password field — 2 bug thật với draft issue chuẩn bị kỹ.
+4. **Phân tích AI nghiêm cẩn:** 2 lỗi AI được hunt với giá trị đúng từ raw, không "dựng" lỗi giả; 5 optimization được phân loại có nguồn từ server.js.
+5. **Git commit log đúng chuẩn:** 13 commit có message rõ ràng, từng bước theo quy trình.
+6. **SKILL.md tái sử dụng được:** Hướng dẫn đủ chi tiết để apply lên endpoint group khác.
+
+---
+
+## Khuyến nghị ưu tiên trước khi nộp
+
+Ưu tiên 1 (PHẢI làm — tránh bị 0 điểm):
+  → Chụp ảnh thật k6 CLI + Task Manager cùng khung cho Load, Stress, Spike
+  → Quay video YouTube Unlisted ≥6 phút có giọng tiếng Việt
+  → Push lên public GitHub và cung cấp URL
+
+Ưu tiên 2 (NÊN làm — giữ điểm cao):
+  → Đăng 2 bug Issues lên GitHub với screenshot
+  → Export full transcript AI và bổ sung vào ai-audit.md
+  → Duyệt và chỉnh sửa AI Critique (248 từ) — hiện là draft agent-written
+  → Điền bảng self-assessment và tạo ZIP đúng tên
+
+Ưu tiên 3 (NÂNG ĐIỂM):
+  → Chạy thêm Stress ở mức cao hơn 30 VU để tìm bậc lỗi đầu tiên
+  → Xác nhận hostname khớp bài trước
+  → Thêm video skill demo vào đoạn 05:00–06:30

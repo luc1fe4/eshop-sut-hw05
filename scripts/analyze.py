@@ -22,12 +22,17 @@ def analyze(folder):
     start = datetime.datetime.fromisoformat(manifest['start']).timestamp()
     end = datetime.datetime.fromisoformat(manifest['end']).timestamp()
     window = end-start
+    summary = json.loads((folder/'summary.json').read_text(encoding='utf-8-sig'))
+    execution_window = summary.get('state',{}).get('testRunDurationMs',0)/1000
+    if execution_window <= 0:
+        raise ValueError('Missing k6 execution duration; do not infer throughput from UI waiting time')
     endpoints = {}
     for name in ['register','forgot','reset','login','cart']:
         durations = [v for t,v,tags in samples['http_req_duration'] if tags.get('endpoint')==name]
         failures = [v for t,v,tags in samples['http_req_failed'] if tags.get('endpoint')==name]
         endpoints[name] = {'samples':len(durations),'p95_ms':percentile(durations),
             'http_rps_wall_window':len(durations)/window,
+            'http_rps_execution_window':len(durations)/execution_window,
             'http_failure_numerator':sum(failures),'http_failure_denominator':len(failures),
             'http_failure_rate':sum(failures)/len(failures) if failures else None,
             'draft_p95_lt_500ms':percentile(durations)<500 if durations else None}
@@ -35,13 +40,16 @@ def analyze(folder):
     if not samples['dropped_iterations']:
         counts['dropped_iterations'] = None
     report = {'run_id':manifest['run_id'],'window':'manifest start/end (includes k6 startup/export overhead)',
-        'window_seconds':window,'endpoints':endpoints,'counts':counts,
+        'window_seconds':window,'execution_window_seconds':execution_window,
+        'execution_window_source':'summary.state.testRunDurationMs; excludes waiting for dashboard tabs after test execution',
+        'endpoints':endpoints,'counts':counts,
         'unfinished_started_minus_finished':counts['m5_started']-counts['m5_finished'],
         'e2e_all_finalized_p95_ms':percentile([v for _,v,_ in samples['m5_e2e_all_ms']]),
         'e2e_success_only_p95_ms':percentile([v for _,v,_ in samples['m5_e2e_success_ms']]),
         'e2e_think_time_included':False,
         'e2e_failure_rate_finalized':1-counts['m5_passed']/counts['m5_finished'] if counts['m5_finished'] else None,
         'e2e_success_throughput_wall_window':counts['m5_passed']/window,
+        'e2e_success_throughput_execution_window':counts['m5_passed']/execution_window,
         'dropped_iterations_observed':bool(samples['dropped_iterations']),
         'dropped_iterations_applicable':False,
         'note':'Closed VU executors; absent dropped_iterations is not an observed arrival-rate guarantee.'}
