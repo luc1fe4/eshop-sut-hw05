@@ -94,12 +94,12 @@ export function optionsFor(profile) {
   if (__ENV.MODE === 'smoke') {
     scenario = {executor:'shared-iterations',vus:1,iterations:Number(__ENV.ITERATIONS || 5),maxDuration:'2m'};
   } else if (__ENV.MODE === 'soak') {
-    scenario = {executor:'constant-vus',vus:Number(__ENV.VUS || 2),duration:__ENV.DURATION || '10m'};
+    scenario = {executor:'constant-vus',vus:Number(__ENV.VUS || 5),duration:__ENV.DURATION || '10m'};
   } else {
     const drafts = {
-      Load:[{duration:'30s',target:2},{duration:'2m',target:2},{duration:'15s',target:0}],
-      Stress:[{duration:'15s',target:2},{duration:'45s',target:2},{duration:'15s',target:5},{duration:'45s',target:5},{duration:'15s',target:10},{duration:'45s',target:10},{duration:'15s',target:0}],
-      Spike:[{duration:'15s',target:2},{duration:'45s',target:2},{duration:'2s',target:15},{duration:'30s',target:15},{duration:'2s',target:2},{duration:'60s',target:2},{duration:'10s',target:0}],
+      Load:[{duration:'30s',target:5},{duration:'2m',target:5},{duration:'15s',target:0}],
+      Stress:[{duration:'15s',target:5},{duration:'45s',target:5},{duration:'15s',target:15},{duration:'45s',target:15},{duration:'15s',target:30},{duration:'45s',target:30},{duration:'15s',target:0}],
+      Spike:[{duration:'15s',target:5},{duration:'45s',target:5},{duration:'2s',target:40},{duration:'30s',target:40},{duration:'2s',target:5},{duration:'60s',target:5},{duration:'10s',target:0}],
     };
     scenario = {executor:'ramping-vus',startVUs:0,stages:__ENV.STAGES_JSON ? JSON.parse(__ENV.STAGES_JSON) : drafts[profile]};
     scenario.gracefulRampDown = '15s';

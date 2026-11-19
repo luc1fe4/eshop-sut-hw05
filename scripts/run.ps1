@@ -3,9 +3,10 @@ param(
   [ValidateSet('smoke','pilot','official','rerun','soak')][string]$Kind = 'smoke',
   [int]$Rows = 20000,
   [string]$StagesJson = '',
-  [int]$Vus = 2,
+  [int]$Vus = 5,
   [string]$Duration = '10m',
-  [int]$BackendPid = 0
+  [int]$BackendPid = 0,
+  [int]$DashboardPort = -1
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
@@ -26,7 +27,7 @@ $env:DURATION = $Duration
 $env:THINK_SECONDS = '1'
 $env:SUMMARY_PATH = Join-Path $outDir 'summary.json'
 $env:K6_WEB_DASHBOARD = 'true'
-$env:K6_WEB_DASHBOARD_PORT = '-1'
+$env:K6_WEB_DASHBOARD_PORT = "$DashboardPort"
 $env:K6_WEB_DASHBOARD_PERIOD = '1s'
 $env:K6_WEB_DASHBOARD_EXPORT = Join-Path $outDir 'dashboard.html'
 $manifest = [ordered]@{
@@ -40,6 +41,7 @@ $manifest = [ordered]@{
  backend_pid=$BackendPid; status='running'
 }
 $manifest | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $outDir 'manifest.json') -Encoding utf8
+python (Join-Path $PSScriptRoot 'db-state.py') (Join-Path $root 'runtime/backend/database.sqlite') | Set-Content (Join-Path $outDir 'db-before.json') -Encoding utf8
 $sampler = $null
 if ($BackendPid -gt 0) {
  $sampler = Start-Job -ArgumentList $BackendPid,(Join-Path $outDir 'resources.csv') -ScriptBlock {
@@ -65,6 +67,7 @@ try {
 } finally {
  if ($sampler) { Stop-Job $sampler; Remove-Job $sampler }
  $manifest.end = Get-Date -Format o
+ python (Join-Path $PSScriptRoot 'db-state.py') (Join-Path $root 'runtime/backend/database.sqlite') --namespace $runId | Set-Content (Join-Path $outDir 'db-after.json') -Encoding utf8
  $manifest | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $outDir 'manifest.json') -Encoding utf8
 }
 Write-Output "Artifacts: $outDir"
