@@ -85,7 +85,7 @@ def render(source):
             paragraph=[line];i+=1
             while i<len(lines) and lines[i].strip() and not lines[i].startswith(('#','|','```','![')):
                 paragraph.append(lines[i].strip());i+=1
-            story.extend([Paragraph(text(' '.join(paragraph)),styles['Normal']),Spacer(1,8)]);continue
+            story.extend([Paragraph(text(' '.join(paragraph)),styles['Normal']),Spacer(1,4 if source.stem=='ai-audit' else 8)]);continue
         i+=1
     target=OUT/(source.stem+'.pdf')
     def footer(c,doc):
