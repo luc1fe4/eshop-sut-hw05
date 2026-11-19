@@ -61,6 +61,9 @@ def main(folder):
         for row in csv.DictReader((folder/'resources.csv').open(encoding='utf-8-sig')):
             when=dt.datetime.fromisoformat(row['time']).timestamp()
             cpu=float(row['cpu_seconds'])
+            if direct_clock and not (0 <= when-origin <= result['execution_window_seconds']):
+                previous=(when,cpu)
+                continue
             resources.append({'seconds':when-origin,'rss_mib':int(row['working_set_bytes'])/1048576,
                 'cpu_percent_machine':(cpu-previous[1])/(when-previous[0])*100/16 if previous else None,
                 'k6_rss_mib':float(row.get('k6_working_set_bytes') or 0)/1048576,

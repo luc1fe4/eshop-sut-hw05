@@ -12,6 +12,15 @@ if ($null -eq $state.self_assessed_grade -or $state.self_assessed_grade -ne $Sel
 foreach ($profile in @('Load','Stress','Spike')) {
  $path = $state.resource_screenshots.$profile
  if (!$path -or !(Test-Path -LiteralPath (Join-Path $root $path))) { $missing += "$profile combined screenshot" }
+ $photoRun = $state.resource_screenshot_runs.$profile
+ if (!$photoRun) { $missing += "$profile screenshot/run mapping"; continue }
+ $photoManifestPath = Join-Path $root "results/$photoRun/manifest.json"
+ if (!(Test-Path -LiteralPath $photoManifestPath)) { $missing += "$profile matched run manifest"; continue }
+ $photoRunState = Get-Content -LiteralPath $photoManifestPath -Raw | ConvertFrom-Json
+ if ($photoRunState.status -ne 'completed' -or $photoRunState.profile -ne $profile) { $missing += "$profile completed matching run" }
+ foreach ($artifact in @('raw.json','summary.json','dashboard.html','verification.json')) {
+  if (!(Test-Path -LiteralPath (Join-Path $root "results/$photoRun/$artifact"))) { $missing += "$profile $artifact" }
+ }
 }
 if ($missing.Count) { throw "Submission remains incomplete: $($missing -join ', ')" }
 $name = '23120330_HW05_AI_Performance_{0:000}.zip' -f $SelfAssessedGrade

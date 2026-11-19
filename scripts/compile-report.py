@@ -5,6 +5,13 @@ ROOT=Path(__file__).resolve().parents[1]
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
 def resource(folder):
     rows=list(csv.DictReader((folder/'resources.csv').open(encoding='utf-8-sig')))
+    measurement_window='all sampler rows (original report method)'
+    if (folder/'phases.json').exists() and (folder/'analysis.json').exists():
+        phase=read(folder/'phases.json');analysis=read(folder/'analysis.json')
+        if phase.get('clock_method','').startswith('direct k6'):
+            start=phase['origin_epoch'];end=start+analysis['execution_window_seconds']
+            rows=[r for r in rows if start<=datetime.datetime.fromisoformat(r['time']).timestamp()<=end]
+            measurement_window='k6 execution window only, direct scenario clock'
     backend=[];generator=[]
     for a,b in zip(rows,rows[1:]):
         delta=(datetime.datetime.fromisoformat(b['time'])-datetime.datetime.fromisoformat(a['time'])).total_seconds()
@@ -12,7 +19,7 @@ def resource(folder):
         if b.get('k6_cpu_seconds') and a.get('k6_cpu_seconds'):
             value=(float(b['k6_cpu_seconds'])-float(a['k6_cpu_seconds']))/delta*100/16
             if value>=0:generator.append(value)
-    return {'samples':len(rows),'backend_cpu_peak_machine_percent':max(backend,default=0),
+    return {'window':measurement_window,'samples':len(rows),'backend_cpu_peak_machine_percent':max(backend,default=0),
       'backend_cpu_mean_machine_percent':sum(backend)/len(backend) if backend else None,
       'backend_rss_peak_mib':max(float(x['working_set_bytes']) for x in rows)/1048576,
       'backend_rss_first_mib':float(rows[0]['working_set_bytes'])/1048576,
@@ -164,3 +171,26 @@ readme+=['','Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login res
  'K6 được đề cho phép nhưng checklist ZIP ghi .jtl. README này quy ước raw.json k6 là bằng chứng gốc theo mẫu tương ứng raw log; ba dashboard.html export tương ứng ba HTML report. Giữ đuôi file gốc. Chưa được cung cấp hướng dẫn Moodle riêng; **sinh viên cần kiểm tra quy ước nộp này**.','',
  'Sau review cập nhật submission-state.json bằng dữ liệu thật, rồi `./scripts/package.ps1 -SelfAssessedGrade <0..100>` tạo `23120330_HW05_AI_Performance_<000..100>.zip`. Script không push/upload/nộp. Không tạo ZIP cuối trước khi có điểm đã duyệt.','']
 (ROOT/'README.md').write_text('\n'.join(readme),encoding='utf-8')
+
+# Supplement the preserved original-run report with explicitly matched photo reruns.
+from evidence_report import compile_evidence
+appendix,photos_ready=compile_evidence(ROOT)
+if photos_ready:
+    main=ROOT/'docs/main-report.md'
+    content=main.read_text(encoding='utf-8')
+    content=content.replace('Task Manager mở được nhưng higher integrity chặn UI agent; chưa có ảnh k6+TaskManager cùng khung hình cho từng run.',
+       'Task Manager có higher integrity chặn UI agent; sinh viên đã phối hợp chụp ba ảnh dashboard+TaskManager thật cho các rerun trong phụ lục.')
+    content=content.replace('ba ảnh desktop cùng khung hình; ','')
+    main.write_text(content+'\n'+appendix,encoding='utf-8')
+    page=ROOT/'README.md';content=page.read_text(encoding='utf-8')
+    content=content.replace('|Ảnh tool+TaskManager mỗi run|**Thiếu**; quyền UI TaskManager chặn điều khiển agent|',
+       '|Ảnh tool+TaskManager mỗi run|Đã có ba ảnh người dùng chụp, ghép đúng raw/HTML của các rerun bên dưới|')
+    content+='\n## Ba rerun có ảnh thật\n\nKết quả gốc ở bảng trên được giữ nguyên. Bộ bổ sung sau có ba ảnh cùng khung hình và raw/HTML riêng. RPS thực thi loại thời gian đợi tab dashboard đóng; xem [phụ lục rerun](docs/evidence-reruns.md).\n\n'
+    content+='| Profile | Run ID | E2E pass | p95 E2E ms | HTTP RPS thực thi | Files |\n|---|---|---|---|---|---|\n'
+    state=read(ROOT/'submission-state.json')
+    for profile in ['Load','Stress','Spike']:
+        key=state['resource_screenshot_runs'][profile];a=read(ROOT/'results'/key/'analysis.json')
+        n=sum(e['samples'] for e in a['endpoints'].values());photo=state['resource_screenshots'][profile]
+        content+=f'| {profile} | {key} | {int(a["counts"]["m5_passed"])} | {a["e2e_success_only_p95_ms"]:.2f} | {n/a["execution_window_seconds"]:.3f} | [ảnh]({photo}), [raw](results/{key}/raw.json), [HTML](results/{key}/dashboard.html), [view](results/{key}/view.html) |\n'
+    content+='\nSpike rerun: throughput trở về gần baseline nhưng p95 hồi phục còn cao hơn baseline; chưa kết luận độ trễ hồi phục hoàn toàn. Chưa có video hoặc human review cuối.\n'
+    page.write_text(content,encoding='utf-8')

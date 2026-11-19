@@ -6,7 +6,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, KeepTogether
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, KeepTogether, PageBreak
 from reportlab.graphics.shapes import Drawing, Rect, Line, String, Polygon
 from pypdf import PdfReader
 
@@ -82,6 +82,8 @@ def render(source):
             story.extend([im,Spacer(1,10)]);i+=1;continue
         if line.startswith('#'):
             level=len(line)-len(line.lstrip('#'));label=line[level:].strip()
+            if source.stem=='ai-audit' and label.startswith('Tiếp tục thu bằng chứng'):
+                story.append(PageBreak())
             story.append(Paragraph(text(label),styles['Title' if level==1 else f'Heading{min(level,3)}']))
         else:
             paragraph=[line];i+=1
