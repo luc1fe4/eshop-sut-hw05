@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { SharedArray } from 'k6/data';
 import exec from 'k6/execution';
-import { Counter, Rate, Trend } from 'k6/metrics';
+import { Counter, Gauge, Rate, Trend } from 'k6/metrics';
 
 const base = (__ENV.BASE_URL || 'http://127.0.0.1:3000').replace(/\/$/, '');
 if (!/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(base)) {
@@ -33,9 +33,11 @@ const durationAll = new Trend('m5_e2e_all_ms', true);
 const durationOK = new Trend('m5_e2e_success_ms', true);
 const failedStep = new Counter('m5_failed_step');
 const exhausted = new Counter('m5_csv_exhausted');
+const scenarioStart = new Gauge('m5_scenario_start_epoch_ms');
 
 export function workflow() {
   const t = Date.now();
+  scenarioStart.add(exec.scenario.startTime);
   started.add(1);
   let ok = false;
   let step = 'csv';

@@ -6,10 +6,19 @@ param(
   [int]$Vus = 5,
   [string]$Duration = '10m',
   [int]$BackendPid = 0,
-  [int]$DashboardPort = -1
+  [int]$DashboardPort = -1,
+  [string]$BackendDir = ''
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
+if (!$BackendDir) { $BackendDir = Join-Path $root 'runtime/backend' }
+$BackendDir = (Resolve-Path -LiteralPath $BackendDir).Path
+$testDb = Join-Path $BackendDir 'database.sqlite'
+if (!(Test-Path -LiteralPath $testDb)) { throw 'Test DB missing; start the isolated backend first' }
+if ($BackendPid -gt 0) {
+ $listener = @(Get-NetTCPConnection -State Listen -LocalPort 3000 -ErrorAction SilentlyContinue)
+ if (!$listener -or @($listener | Where-Object OwningProcess -ne $BackendPid).Count) { throw 'Port 3000 does not belong to the supplied backend PID' }
+}
 $stamp = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'SE Asia Standard Time').ToString('yyyyMMdd-HHmmss')
 $runId = "$Kind-$($Profile.ToLower())-$stamp-$([guid]::NewGuid().ToString('N').Substring(0,8))"
 $outDir = Join-Path $root "results/$runId"
@@ -38,10 +47,14 @@ $manifest = [ordered]@{
  k6=(& k6 version | Out-String).Trim(); node=(& node --version | Out-String).Trim();
  sut_commit=$null; sut_commit_reason='Input archive has no .git; SHA256 used instead';
  sut_hashes=@(Get-FileHash (Join-Path $root '../backend/server.js'),(Join-Path $root '../backend/database.js') | Select-Object Path,Hash);
+ runtime_hashes=@(Get-FileHash (Join-Path $BackendDir 'server.js'),(Join-Path $BackendDir 'database.js') | Select-Object Path,Hash);
+ runtime_backend_dir=$BackendDir; db_path=$testDb;
+ test_plan_commit=(& git -C $root rev-parse HEAD | Out-String).Trim();
+ workflow_sha256=(Get-FileHash (Join-Path $root 'plans/workflow.js')).Hash;
  backend_pid=$BackendPid; status='running'
 }
 $manifest | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $outDir 'manifest.json') -Encoding utf8
-python (Join-Path $PSScriptRoot 'db-state.py') (Join-Path $root 'runtime/backend/database.sqlite') | Set-Content (Join-Path $outDir 'db-before.json') -Encoding utf8
+python (Join-Path $PSScriptRoot 'db-state.py') $testDb | Set-Content (Join-Path $outDir 'db-before.json') -Encoding utf8
 $sampler = $null
 if ($BackendPid -gt 0) {
  $sampler = Start-Job -ArgumentList $BackendPid,(Join-Path $outDir 'resources.csv') -ScriptBlock {
@@ -67,7 +80,7 @@ try {
 } finally {
  if ($sampler) { Stop-Job $sampler; Remove-Job $sampler }
  $manifest.end = Get-Date -Format o
- python (Join-Path $PSScriptRoot 'db-state.py') (Join-Path $root 'runtime/backend/database.sqlite') --namespace $runId | Set-Content (Join-Path $outDir 'db-after.json') -Encoding utf8
+ python (Join-Path $PSScriptRoot 'db-state.py') $testDb --namespace $runId | Set-Content (Join-Path $outDir 'db-after.json') -Encoding utf8
  $manifest | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $outDir 'manifest.json') -Encoding utf8
 }
 Write-Output "Artifacts: $outDir"

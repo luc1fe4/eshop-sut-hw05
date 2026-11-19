@@ -24,7 +24,14 @@ def main(folder):
     # Earliest VU gauge is emitted by k6's periodic 1-second collector.
     # This is an inferred run clock, NOT the first iteration (ramp from zero delays it).
     # Keep a conservative 2-second margin off each hold boundary for jitter.
-    origin=min(t for t,_,_ in samples['vus'])-1
+    direct_clock = [v/1000 for _,v,_ in samples['m5_scenario_start_epoch_ms']]
+    if direct_clock:
+        if max(direct_clock)-min(direct_clock)>0.001:raise ValueError('Multiple scenario clocks found')
+        origin=direct_clock[0]
+        clock_method='direct k6 scenario.startTime; 2s trimmed on each hold edge'
+    else:
+        origin=min(t for t,_,_ in samples['vus'])-1
+        clock_method='inferred from first 1-second VU gauge minus 1s; timing uncertainty not exactly bounded; 2s trimmed on each hold edge'
     if manifest['kind']=='soak':
         seconds=600 if manifest['duration']=='10m' else int(manifest['duration'].rstrip('s'))
         stages=[(min(60,seconds-i),manifest['vus']) for i in range(0,seconds,60)]
@@ -60,7 +67,7 @@ def main(folder):
                 'system_cpu_percent':float(row['system_cpu_percent']) if row.get('system_cpu_percent') else None,
                 'system_available_mib':float(row['system_available_bytes'])/1048576 if row.get('system_available_bytes') else None})
             previous=(when,cpu)
-    (folder/'phases.json').write_text(json.dumps({'origin_epoch':origin,'clock_method':'inferred from first 1-second VU gauge minus 1s; timing uncertainty not exactly bounded; 2s trimmed on each hold edge', 'allocation':'request/iteration completion timestamp; boundary-crossing requests assigned by completion',
+    (folder/'phases.json').write_text(json.dumps({'origin_epoch':origin,'clock_method':clock_method, 'allocation':'request/iteration completion timestamp; boundary-crossing requests assigned by completion',
         'phases':phases,'timeline_5s':bins,'resources':resources},indent=2),encoding='utf-8')
     with (folder/'phases.csv').open('w',newline='',encoding='utf-8') as f:
         w=csv.DictWriter(f,fieldnames=list(phases[0]));w.writeheader();w.writerows(phases)
@@ -96,7 +103,7 @@ def main(folder):
             for ax in axes:
                 for begin,end,color in [(15,60,'green'),(62,92,'red'),(94,154,'blue')]:ax.axvspan(begin,end,color=color,alpha=.08)
         for ax in axes:ax.grid(alpha=.3)
-        axes[-1].set_xlabel('Seconds from inferred k6 clock; 5-second bins')
+        axes[-1].set_xlabel(('Seconds from scenario.startTime' if direct_clock else 'Seconds from inferred k6 clock')+'; 5-second bins')
         fig.suptitle(manifest['run_id']);fig.tight_layout()
         filename='soak-windows.png' if is_soak else 'spike-timeline.png'
         fig.savefig(folder/filename,dpi=140);plt.close(fig)
