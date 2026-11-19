@@ -1,0 +1,5 @@
+runtime/
+data/*
+!data/README.md
+results/
+__pycache__/
