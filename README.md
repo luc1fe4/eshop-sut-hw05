@@ -31,6 +31,8 @@ Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa 
 
 ## Hồ sơ và cách chạy
 
+- [Kịch bản quay video chi tiết bằng tiếng Việt, 16-18phút](docs/video-recording-script-vi.md): bố cục OBS, lệnh chạy, lời đọc và demo Agent Skill thật.
+
 - [Main report Markdown](docs/main-report.md) và [PDF draft](output/pdf/main-report.pdf).
 - [API contract](docs/api-contract.md), [assertions/workload draft](docs/review-workload.md), [measured analysis](docs/measurement-results.md).
 - [AI Audit Markdown](docs/ai-audit.md) và [PDF draft](output/pdf/ai-audit.pdf); actual outputs trong docs/audit; transcript đầy đủ còn thiếu.
