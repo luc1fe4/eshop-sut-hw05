@@ -10,11 +10,12 @@
   "k6_raw_json_submission_convention_confirmed": false,
   "resource_screenshots": {
     "Load": "results/rerun-load-20261119-163449-813f2702/load-k6-taskmanager.png",
-    "Stress": null,
+    "Stress": "results/rerun-stress-20261119-164026-b02a7bbd/stress-k6-taskmanager.png",
     "Spike": null
   },
   "note": "False/null means pending, not a claimed negative review. Update only from real evidence and user responses.",
   "resource_screenshot_runs": {
-    "Load": "rerun-load-20261119-163449-813f2702"
+    "Load": "rerun-load-20261119-163449-813f2702",
+    "Stress": "rerun-stress-20261119-164026-b02a7bbd"
   }
 }

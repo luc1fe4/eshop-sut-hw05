@@ -20,11 +20,13 @@ K6 có thể đợi tab dashboard sau khi workload kết thúc. Không lấy th�
 
 | Profile | Run ID | Trạng thái | Ảnh cùng khung |
 |---|---|---|---|
-| Load | rerun-load-20261119-162216-d7ab78da | Workload kết thúc; đang đợi dashboard để hoàn tất artifacts | Chưa nhận ảnh đủ dashboard+TaskManager |
-| Load - ảnh trong hold | rerun-load-20261119-163449-813f2702 | CLI báo 691 complete/0 interrupted, 2m45s; đang đợi tab đóng để có summary | Đã nhận load-k6-taskmanager.png, chart tới khoảng16:36:10 trong vùng hold, PID32692/CPU/Memory rõ |
-| Stress | Chưa chạy | Đợi cổng5665 của Load được giải phóng | Chưa có |
+| Load | rerun-load-20261119-162216-d7ab78da | Workload 689 complete/0 interrupted; controller đã dừng sau workload khi đợi dashboard để nhường cổng. Không có summary; không nhận là run hoàn tất artifacts | Chưa nhận ảnh đủ khi workload hoạt động |
+| Load - ảnh trong hold | rerun-load-20261119-163449-813f2702 | Completed, exit0; 691/691 E2E, 3455HTTP, 0lỗi; p95E2E34ms; đã verify raw độc lập | Đã nhận load-k6-taskmanager.png, chart tới khoảng16:36:10 trong vùng hold, PID32692/CPU/Memory rõ |
+| Stress | rerun-stress-20261119-164026-b02a7bbd | Workload5/15/30VU đã chạy hết:2890complete/0interrupted; đợi tab đóng để xuất summary | Đã nhận stress-k6-taskmanager.png trong hold15VU, khoảng73HTTP/s, PID32692/CPU/Memory |
 | Spike | Chưa chạy | Sau Stress | Chưa có |
 
 Ảnh người dùng đã gửi được giữ nguyên byte trong results/evidence-support/taskmanager-selected-pid-32692.png và dashboard-before-rerun-connection-refused.png. Đây là ảnh hỗ trợ chẩn đoán, không đánh dấu resource_screenshots.Load/Stress/Spike=true từ hai ảnh này. Timestamp import không phải timestamp chụp.
 
 Ảnh Load mới hợp lệ được người dùng gửi từ codex-clipboard-7229886a-05c8-4679-bbfc-199d4ea80511.png. Đã sao nguyên byte vào results/rerun-load-20261119-163449-813f2702/load-k6-taskmanager.png; metadata và SHA256 trong screenshot-evidence.json. submission-state.json liên kết ảnh với đúng rerun qua resource_screenshot_runs.Load. Card25/s là snapshot, không phải RPS tổng run. Task Manager CPU00 là giá trị hiển thị được làm tròn, không được diễn giải là không sử dụng CPU. Đây là agent kiểm tra bằng chứng, không phải sinh viên duyệt toàn bộ báo cáo/critique.
+
+Load có ảnh: duration k6=165.5063627s, HTTP throughput thực thi=3455/165.5063627=20.875330HTTP/s, E2E throughput=4.175066/s. Wall interval260.483492s có cả chờ dashboard; không dùng giá trị wall13.263796HTTP/s để đánh giá tải thực thi. Các p95 endpoint register/forgot/reset/login/cart lần lượt10.6319/10.14365/8.97615/6.4244/2.449ms. Raw, summary, analysis, verification và view được giữ tại đúng thư mục rerun, không thay bảng kết quả run gốc.
