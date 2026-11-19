@@ -24,7 +24,7 @@ Probe lúc 2026-11-19 14:15:32 +07:00: năm status 200, resetToken string dài 4
 
 ## Scope and review
 
-Đối chiếu theo bảng người dùng cung cấp: M4 GET /api/users/me; M1/M2 POST /api/cart. Repo chỉ có backend/test_profile.js là test profile, không có script k6 hay bảng phân công nhóm. **Chưa xác nhận M1/M2 có GET /api/cart hoặc quy tắc trùng bỏ qua method.** Giữ GET /api/cart cho tới khi có phản hồi thật. Nếu trùng, trao đổi M1 trước khi đổi GET /api/products/:id; đó là đọc công khai theo api_specification.md:87 và backend/server.js:164, login vẫn chứng minh mật khẩu mới. Không tự đổi.
+Đối chiếu theo bảng người dùng cung cấp: M4 GET /api/users/me; M1/M2 POST /api/cart. Repo chỉ có backend/test_profile.js là test profile, không có script k6 hay bảng phân công nhóm. **Chưa xác nhận M1/M2 có GET /api/cart hoặc quy tắc trùng bỏ qua method.** Giữ GET /api/cart cho tới khi có phản hồi thật. Nếu trùng, trao đổi M1 trước khi đổi GET /api/products/:id; đó là đọc công khai theo api_specification.md:85 và backend/server.js:159, login vẫn chứng minh mật khẩu mới. Không tự đổi.
 
 Human review đã nhận trong chat: “Giữ GET /api/cart; không trùng theo method+path”. Phần assertion và workload chưa có phản hồi cụ thể; các nhận xét kỹ thuật trong hồ sơ là agent tự kiểm tra.
 

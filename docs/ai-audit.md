@@ -28,7 +28,7 @@ Auto-review từ chối đọc nodeRepl.requestMeta để tìm metadata transcri
 
 Chưa quan sát lỗi AI tính p95 trên smoke: linear interpolation độc lập khớp summary trong sai số float. Không dựng một phát biểu p95/RPS sai để có thêm dòng hunt. Agent tự sửa code pacing ở finally và bổ sung cửa sổ RPS; đó là self-review, chưa phải human correction.
 
-Phân tích sau raw chính thức: measurement-results.md là output AI thật được biên soạn từ analysis.json/phases.json. verification.json dùng Python statistics.quantiles(method=inclusive), khác code percentile analyzer, xác nhận p95 mỗi endpoint và E2E khớp k6 summary trong 1e-7ms. Ba dashboard.html mở trong Edge headless có 14canvas, 2SVG/file, không lỗi JavaScript; ảnh QA thật chỉ dùng xác minh HTML. Bổ sung kết quả soak khi đủ 10phút. Đây không thay review của sinh viên.
+Phân tích sau raw chính thức: measurement-results.md là output AI thật được biên soạn từ analysis.json/phases.json. verification.json dùng Python statistics.quantiles(method=inclusive), khác code percentile analyzer, xác nhận p95 mỗi endpoint và E2E khớp k6 summary trong 1e-7ms. Ba dashboard.html mở trong Edge headless có 14canvas, 2SVG/file, không lỗi JavaScript; ảnh QA thật chỉ dùng xác minh HTML. Soak đã đủ10phút:2858E2E/14290HTTP, p95E2E67ms, không lỗi; source raw trong run soak-load-20261119-143548-37e75817. Đây không thay review của sinh viên.
 
 ## Đề xuất tối ưu và đối chiếu mã nguồn (AI output dự thảo)
 
@@ -41,3 +41,5 @@ Phân tích sau raw chính thức: measurement-results.md là output AI thật �
 | Tránh seed/drop lúc mỗi startup | Feasible về vận hành test | database.js:117 init vô điều kiện; không tự sửa vì thay phiên bản SUT; dùng runtime/DB riêng trong đợt đo hiện tại. |
 
 Các giả thuyết trên không phải kết luận nguyên nhân latency. Bổ sung kết quả chính thức và đối chiếu phase sau khi có đủ raw.
+
+Các công cụ bổ sung đã dùng thật: matplotlib, reportlab, pypdf, Pillow, PyYAML validator, statistics stdlib, Poppler pdftoppm và Edge headless qua Playwright bundled. Phiên bản thực tế đọc từ metadata trong tool-versions.txt; bộ pip Playwright mới tải lâu đã hủy và không được dùng. Skill replay sau khi đọc SKILL.md đã chạy lúc14:46:18+07, 5/5E2E pass, run skill-demo-load-20261119-144618-45deee1a; chưa có video.

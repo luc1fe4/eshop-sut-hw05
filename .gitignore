@@ -3,3 +3,5 @@ data/*
 !data/README.md
 results/
 __pycache__/
+tmp/
+git-commit-log.txt

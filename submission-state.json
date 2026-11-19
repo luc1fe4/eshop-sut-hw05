@@ -1,0 +1,17 @@
+{
+  "student_id": "23120330",
+  "self_assessed_grade": null,
+  "github_public_url": null,
+  "youtube_unlisted_url": null,
+  "hostname_matches_previous_homework": false,
+  "human_review_complete": false,
+  "critique_approved": false,
+  "full_chat_export_attached": false,
+  "k6_raw_json_submission_convention_confirmed": false,
+  "resource_screenshots": {
+    "Load": null,
+    "Stress": null,
+    "Spike": null
+  },
+  "note": "False/null means pending, not a claimed negative review. Update only from real evidence and user responses."
+}

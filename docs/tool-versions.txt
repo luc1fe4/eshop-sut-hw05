@@ -1,0 +1,8 @@
+matplotlib==3.10.9
+reportlab==4.4.9
+pypdf==6.9.1
+Pillow==12.1.1
+packaging==26.3
+PyYAML==6.0.3
+python-dateutil==4.0.0
+six==1.17.0
