@@ -2,7 +2,7 @@
 
 Kịch bản quay chi tiết hiện tại: [video-recording-script-vi.md](video-recording-script-vi.md), khoảng16-18phút, gồm thao tác, lời đọc và lệnh PowerShell. Bản7phút bên dưới là draft trước, giữ để truy vết. Chapter demo skill chính thức chỉ cập nhật sau khi có video thật.
 
-Đã chạy Load/Stress/Spike chính thức, soak5VU/10phút đã hoàn tất; xem measurement-results.md và manifest để biết trạng thái mới nhất. Đã có ảnh dxdiag thật và ảnh HTML QA headless, đã có ba ảnh k6+TaskManager của các rerun do người dùng chụp; **chưa có video**. Máy đo Windows hostname Phuc; sinh viên phản hồi còn cần kiểm tra khớp bài trước. Không sử dụng screenshot giả hay môi trường khác để thay bằng chứng Windows.
+Đã chạy Load/Stress/Spike chính thức, soak5VU/10phút đã hoàn tất; xem measurement-results.md và manifest để biết trạng thái mới nhất. Đã có ảnh dxdiag thật và ảnh HTML QA headless, đã có ba ảnh k6+TaskManager của các rerun do người dùng chụp. Ngày2026-11-22, sinh viên đã cung cấp [link YouTube](https://youtu.be/rAj0_UKHOz4). Trước nộp, sinh viên cần tự mở thử khi không đăng nhập và xác nhận trạng thái Unlisted, thời lượng >=6phút và tiếng Việt của chính mình; agent không suy diễn các thuộc tính đó từ URL. Máy đo Windows hostname Phuc; sinh viên phản hồi còn cần kiểm tra khớp bài trước. Không sử dụng screenshot giả hay môi trường khác để thay bằng chứng Windows.
 
 ## Chạy lại bằng PowerShell
 

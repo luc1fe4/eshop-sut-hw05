@@ -15,7 +15,7 @@ Workflow: Register (Auth-heavy) -> Forgot/Reset (Transactional) -> Login hỗ tr
 
 Endurance đã thử: **5 VU / 10 phút**, 23.723 HTTP RPS trung bình wall, p95 E2E 67.00ms, HTTP/E2E lỗi0. Backend RSS peak 100.96MiB. Đây là mức đã kiểm chứng, **chưa xác định ngưỡng tối đa**.
 
-Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa password field), draft trong [issue-drafts.md](docs/issue-drafts.md). GitHub Issues đã đăng:0. Không có issue hiệu năng đã chứng minh. Video Unlisted: **chờ người dùng cung cấp link thật**. Public GitHub: **chờ duyệt và link thật**.
+Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa password field), draft trong [issue-drafts.md](docs/issue-drafts.md). GitHub Issues đã đăng:0. Không có issue hiệu năng đã chứng minh. Video do sinh viên cung cấp: [YouTube](https://youtu.be/rAj0_UKHOz4). Trước nộp, sinh viên cần tự kiểm tra video mở được khi không đăng nhập, để chế độ Unlisted, dài ít nhất 6 phút và có tiếng Việt của chính sinh viên. Public GitHub: **chờ duyệt và link thật**.
 
 ## Tự chấm - chưa nhận điểm sinh viên
 
@@ -55,7 +55,7 @@ Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa 
 |Soak 10-15phút|Xem test summary và raw riêng; không gọi maximum|
 |Ảnh tool+TaskManager mỗi run|Đã có ba ảnh người dùng chụp, ghép đúng raw/HTML của các rerun bên dưới|
 |Hardware report/ảnh|Có; continuity hostname **chờ xác nhận**|
-|YouTube Unlisted >=6phút giọng sinh viên|**Thiếu**; chỉ có kịch bản7phút|
+|YouTube Unlisted >=6phút giọng sinh viên|[Đã nhận link do sinh viên cung cấp](https://youtu.be/rAj0_UKHOz4); **cần tự xác nhận** mở được/Unlisted/thời lượng >=6phút/giọng Việt trước nộp|
 |Public GitHub|**Thiếu**; chờ quyền push/public và URL thật|
 |Git log/Skill/pipeline|Có, cập nhật log sau commit cuối|
 |Bug report và Issue screenshots|Có2 draft;0Issue đã đăng, chưa có screenshotIssue|
@@ -75,4 +75,4 @@ Kết quả gốc ở bảng trên được giữ nguyên. Bộ bổ sung sau c�
 | Stress | rerun-stress-20261119-164026-b02a7bbd | 2890 | 69.00 | 74.065 | [ảnh](results/rerun-stress-20261119-164026-b02a7bbd/stress-k6-taskmanager.png), [raw](results/rerun-stress-20261119-164026-b02a7bbd/raw.json), [HTML](results/rerun-stress-20261119-164026-b02a7bbd/dashboard.html), [view](results/rerun-stress-20261119-164026-b02a7bbd/view.html) |
 | Spike | rerun-spike-20261119-164621-7f96e5f6 | 1830 | 68.00 | 55.694 | [ảnh](results/rerun-spike-20261119-164621-7f96e5f6/spike-k6-taskmanager.png), [raw](results/rerun-spike-20261119-164621-7f96e5f6/raw.json), [HTML](results/rerun-spike-20261119-164621-7f96e5f6/dashboard.html), [view](results/rerun-spike-20261119-164621-7f96e5f6/view.html) |
 
-Spike rerun: throughput trở về gần baseline nhưng p95 hồi phục còn cao hơn baseline; chưa kết luận độ trễ hồi phục hoàn toàn. Chưa có video hoặc human review cuối.
+Spike rerun: throughput trở về gần baseline nhưng p95 hồi phục còn cao hơn baseline; chưa kết luận độ trễ hồi phục hoàn toàn. Video link đã được sinh viên cung cấp: [YouTube](https://youtu.be/rAj0_UKHOz4); human review cuối vẫn chờ.

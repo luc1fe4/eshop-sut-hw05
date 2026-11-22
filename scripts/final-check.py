@@ -61,6 +61,6 @@ for name in ['README.md','submission-state.json','git-commit-log.txt']:
 (root/'results/artifact-inventory.json').write_text(json.dumps(inventory,indent=2),encoding='utf-8')
 result={'technical_artifact_checks_passed':True,'submission_complete':False,
         'runs':runs,'pdf_pages':pdfs,'resource_photo_checks':photo_checks,
-        'remaining':'Human review, full chat export, hostname continuity, real public GitHub/YouTube URLs, grade and final ZIP.'}
+        'remaining':'Human review, full chat export, hostname continuity, public GitHub URL, student verification of supplied YouTube link, grade and final ZIP.'}
 (root/'results/final-check.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
 print(json.dumps(result,indent=2))
