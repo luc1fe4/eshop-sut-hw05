@@ -15,7 +15,7 @@ Workflow: Register (Auth-heavy) -> Forgot/Reset (Transactional) -> Login hỗ tr
 
 Endurance đã thử: **5 VU / 10 phút**, 23.723 HTTP RPS trung bình wall, p95 E2E 67.00ms, HTTP/E2E lỗi0. Backend RSS peak 100.96MiB. Đây là mức đã kiểm chứng, **chưa xác định ngưỡng tối đa**.
 
-Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa password field), draft trong [issue-drafts.md](docs/issue-drafts.md). GitHub Issues dự kiến đăng trên repo: [https://github.com/luc1fe4/eshop-sut-hw05/issues](https://github.com/luc1fe4/eshop-sut-hw05/issues). Video do sinh viên cung cấp: [YouTube](https://youtu.be/rAj0_UKHOz4). Trước nộp, sinh viên cần tự kiểm tra video mở được khi không đăng nhập, để chế độ Unlisted, dài ít nhất 6 phút và có tiếng Việt của chính sinh viên. Public GitHub: [https://github.com/luc1fe4/eshop-sut-hw05](https://github.com/luc1fe4/eshop-sut-hw05).
+Phát hiện đã xác minh: 2 (OTP 4 thay vì 6 chữ số; login response chứa trường password), đã đăng trên [GitHub Issues](https://github.com/luc1fe4/eshop-sut-hw05/issues) và báo cáo tại [docs/issue-drafts.md](docs/issue-drafts.md). Không có issue hiệu năng đã chứng minh. Video do sinh viên cung cấp: [YouTube](https://youtu.be/rAj0_UKHOz4). Trước nộp, sinh viên cần tự kiểm tra video mở được khi không đăng nhập, để chế độ Unlisted, dài ít nhất 6 phút và có tiếng Việt của chính sinh viên. Public GitHub: [https://github.com/luc1fe4/eshop-sut-hw05](https://github.com/luc1fe4/eshop-sut-hw05).
 
 ## Tự chấm
 
@@ -58,7 +58,7 @@ Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa 
 |YouTube Unlisted >=6phút giọng sinh viên|[Đã nhận link do sinh viên cung cấp](https://youtu.be/rAj0_UKHOz4); **cần tự xác nhận** mở được/Unlisted/thời lượng >=6phút/giọng Việt trước nộp|
 |Public GitHub|[https://github.com/luc1fe4/eshop-sut-hw05](https://github.com/luc1fe4/eshop-sut-hw05)|
 |Git log/Skill/pipeline|Có, cập nhật log sau commit cuối|
-|Bug report và Issue screenshots|Có 2 draft trong docs/issue-drafts.md; đăng lên GitHub Issues và chụp ảnh đính kèm|
+|Bug report và Issue screenshots|Đã đăng 2 Issues lên GitHub ([#1](https://github.com/luc1fe4/eshop-sut-hw05/issues/1), [#2](https://github.com/luc1fe4/eshop-sut-hw05/issues/2)) và chụp ảnh màn hình đính kèm|
 |Điểm và ZIP đúng tên|Đã chọn điểm 095; tạo file ZIP 23120330_HW05_AI_Performance_095.zip|
 
 K6 được đề cho phép nhưng checklist ZIP ghi .jtl. README này quy ước raw.json k6 là bằng chứng gốc theo mẫu tương ứng raw log; ba dashboard.html export tương ứng ba HTML report. Giữ đuôi file gốc. Chưa được cung cấp hướng dẫn Moodle riêng; **sinh viên cần kiểm tra quy ước nộp này**.
