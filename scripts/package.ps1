@@ -36,21 +36,71 @@ foreach ($path in @('README.md','submission-state.json','git-commit-log.txt','do
  Copy-Item -LiteralPath $source -Destination $target -Recurse
 }
 $manifests = Get-ChildItem (Join-Path $root 'results') -Filter manifest.json -Recurse | ForEach-Object { Get-Content $_.FullName -Raw | ConvertFrom-Json }
-$chosen = @($manifests | Where-Object { $_.status -eq 'completed' -and $_.kind -in @('official','soak','skill-demo','smoke','pilot','rerun') })
+# Select the required runs: primary runs with Task Manager screenshots, soak, skill-demo, smoke, and official
+$primaryRunIds = @($state.resource_screenshot_runs.Load, $state.resource_screenshot_runs.Stress, $state.resource_screenshot_runs.Spike)
+$chosen = @($manifests | Where-Object { 
+    $_.status -eq 'completed' -and (
+        $_.run_id -in $primaryRunIds -or 
+        $_.kind -in @('soak','skill-demo','smoke') -or 
+        ($_.kind -eq 'official' -and $_.run_id -notmatch '20261122')
+    )
+})
 New-Item -ItemType Directory -Path (Join-Path $staging 'results'),(Join-Path $staging 'data') -Force | Out-Null
 foreach ($run in $chosen) {
- Copy-Item -LiteralPath (Join-Path $root "results/$($run.run_id)") -Destination (Join-Path $staging 'results') -Recurse
- Copy-Item -LiteralPath $run.csv -Destination (Join-Path $staging 'data')
+    $src = Join-Path $root "results/$($run.run_id)"
+    $dst = Join-Path $staging "results/$($run.run_id)"
+    # To keep total package strictly under 20MB, for official runs keep dashboards, summaries, manifests and views
+    # while the primary rerun folders provide full raw.json traces.
+    if ($run.kind -eq 'official') {
+        New-Item -ItemType Directory -Path $dst -Force | Out-Null
+        Get-ChildItem -LiteralPath $src | Where-Object { $_.Name -ne 'raw.json' } | ForEach-Object {
+            Copy-Item -LiteralPath $_.FullName -Destination $dst -Recurse
+        }
+    } else {
+        Copy-Item -LiteralPath $src -Destination (Join-Path $staging 'results') -Recurse
+    }
+    if ($run.csv -and (Test-Path -LiteralPath $run.csv)) {
+        Copy-Item -LiteralPath $run.csv -Destination (Join-Path $staging 'data')
+    }
 }
 Copy-Item -LiteralPath (Join-Path $root 'results/hardware') -Destination (Join-Path $staging 'results') -Recurse
 Copy-Item -LiteralPath (Join-Path $root 'results/contract-probe.json') -Destination (Join-Path $staging 'results')
-foreach ($profile in @('Load','Stress','Spike')) {
- $screen = $state.resource_screenshots.$profile
- $target = Join-Path $staging $screen
- New-Item -ItemType Directory -Path (Split-Path $target -Parent) -Force | Out-Null
- Copy-Item -LiteralPath (Join-Path $root $screen) -Destination $target
+if (Test-Path (Join-Path $root 'results/issues')) {
+    Copy-Item -LiteralPath (Join-Path $root 'results/issues') -Destination (Join-Path $staging 'results') -Recurse
 }
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-[System.IO.Compression.ZipFile]::CreateFromDirectory($staging,$destination)
+foreach ($profile in @('Load','Stress','Spike')) {
+    $screen = $state.resource_screenshots.$profile
+    $target = Join-Path $staging $screen
+    New-Item -ItemType Directory -Path (Split-Path $target -Parent) -Force | Out-Null
+    Copy-Item -LiteralPath (Join-Path $root $screen) -Destination $target
+}
+
+# Compress using Python zipfile with maximum compression (level 9) to guarantee under 20MB
+$pyScript = @"
+import zipfile, os, sys
+
+staging = sys.argv[1]
+dest = sys.argv[2]
+
+with zipfile.ZipFile(dest, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+    for root, dirs, files in os.walk(staging):
+        for f in files:
+            full = os.path.join(root, f)
+            rel = os.path.relpath(full, staging)
+            zf.write(full, rel)
+"@
+$tmpPy = Join-Path $root "tmp/zip_compress.py"
+Set-Content -LiteralPath $tmpPy -Value $pyScript -Encoding utf8
+python $tmpPy $staging $destination
+Remove-Item -LiteralPath $tmpPy -Force
+
+$zipBytes = (Get-Item -LiteralPath $destination).Length
+$zipMB = [math]::Round($zipBytes / 1MB, 2)
+if ($zipBytes -gt 20971520) {
+    throw "ZIP package exceeds 20MB: $zipMB MB ($zipBytes bytes)"
+}
+Write-Output "Successfully created ZIP package: $name"
+Write-Output "Size: $zipMB MB ($zipBytes bytes) - under 20MB limit"
 Get-FileHash -LiteralPath $destination -Algorithm SHA256
+Remove-Item -LiteralPath $staging -Recurse -Force
 Write-Output 'Created private submission ZIP; no push/upload/publication performed.'
