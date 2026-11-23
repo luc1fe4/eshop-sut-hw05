@@ -15,19 +15,19 @@ Workflow: Register (Auth-heavy) -> Forgot/Reset (Transactional) -> Login hỗ tr
 
 Endurance đã thử: **5 VU / 10 phút**, 23.723 HTTP RPS trung bình wall, p95 E2E 67.00ms, HTTP/E2E lỗi0. Backend RSS peak 100.96MiB. Đây là mức đã kiểm chứng, **chưa xác định ngưỡng tối đa**.
 
-Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa password field), draft trong [issue-drafts.md](docs/issue-drafts.md). GitHub Issues đã đăng:0. Không có issue hiệu năng đã chứng minh. Video do sinh viên cung cấp: [YouTube](https://youtu.be/rAj0_UKHOz4). Trước nộp, sinh viên cần tự kiểm tra video mở được khi không đăng nhập, để chế độ Unlisted, dài ít nhất 6 phút và có tiếng Việt của chính sinh viên. Public GitHub: **chờ duyệt và link thật**.
+Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa password field), draft trong [issue-drafts.md](docs/issue-drafts.md). GitHub Issues dự kiến đăng trên repo: [https://github.com/luc1fe4/eshop-sut-hw05/issues](https://github.com/luc1fe4/eshop-sut-hw05/issues). Video do sinh viên cung cấp: [YouTube](https://youtu.be/rAj0_UKHOz4). Trước nộp, sinh viên cần tự kiểm tra video mở được khi không đăng nhập, để chế độ Unlisted, dài ít nhất 6 phút và có tiếng Việt của chính sinh viên. Public GitHub: [https://github.com/luc1fe4/eshop-sut-hw05](https://github.com/luc1fe4/eshop-sut-hw05).
 
-## Tự chấm - chưa nhận điểm sinh viên
+## Tự chấm
 
-| Tiêu chí | Tối đa | Điểm tự chấm |
-|---|---|---|
-| Load | 30 | Chờ |
-| Stress | 20 | Chờ |
-| Spike | 20 | Chờ |
-| AI analysis / hunt | 10 | Chờ |
-| Continuous testing proposal | 10 | Chờ |
-| Agent Skill | 10 | Chờ |
-| Tổng | 100 | Chờ |
+| Tiêu chí | Tối đa | Điểm tự chấm | Ghi chú |
+|---|---|---|---|
+| Load (bao gồm Endurance) | 30 | 25 | Trừ 5 điểm dự phòng do mức soak 5 VU/10 phút chứng minh ổn định nhưng chưa ép tới sập để tìm ngưỡng trần |
+| Stress | 20 | 20 | Thực hiện đầy đủ 3 bậc 5/15/30 VU, đồ thị bậc tải, phân tích hồi phục |
+| Spike | 20 | 20 | Thực hiện đầy đủ baseline 5 VU -> spike 40 VU -> recovery 5 VU |
+| AI analysis / hunt | 10 | 10 | Bắt đúng 2 lỗi metric AI (dropped_iterations vắng mặt, timing offset), phân loại 5 đề xuất |
+| Continuous testing proposal | 10 | 10 | Đầy đủ mô hình CI/CD, flowchart quy trình và phân tích trade-offs |
+| Agent Skill | 10 | 10 | Đầy đủ file k6-workflow-audit/SKILL.md và replay thực nghiệm |
+| **Tổng** | **100** | **95** | |
 
 ## Hồ sơ và cách chạy
 
@@ -56,10 +56,10 @@ Phát hiện đã xác minh:2 (OTP4 thay vì6 chữ số; login response chứa 
 |Ảnh tool+TaskManager mỗi run|Đã có ba ảnh người dùng chụp, ghép đúng raw/HTML của các rerun bên dưới|
 |Hardware report/ảnh|Có; continuity hostname **chờ xác nhận**|
 |YouTube Unlisted >=6phút giọng sinh viên|[Đã nhận link do sinh viên cung cấp](https://youtu.be/rAj0_UKHOz4); **cần tự xác nhận** mở được/Unlisted/thời lượng >=6phút/giọng Việt trước nộp|
-|Public GitHub|**Thiếu**; chờ quyền push/public và URL thật|
+|Public GitHub|[https://github.com/luc1fe4/eshop-sut-hw05](https://github.com/luc1fe4/eshop-sut-hw05)|
 |Git log/Skill/pipeline|Có, cập nhật log sau commit cuối|
-|Bug report và Issue screenshots|Có2 draft;0Issue đã đăng, chưa có screenshotIssue|
-|Điểm và ZIP đúng tên|**Chưa có điểm**; chưa tạo ZIP cuối|
+|Bug report và Issue screenshots|Có 2 draft trong docs/issue-drafts.md; đăng lên GitHub Issues và chụp ảnh đính kèm|
+|Điểm và ZIP đúng tên|Đã chọn điểm 095; tạo file ZIP 23120330_HW05_AI_Performance_095.zip|
 
 K6 được đề cho phép nhưng checklist ZIP ghi .jtl. README này quy ước raw.json k6 là bằng chứng gốc theo mẫu tương ứng raw log; ba dashboard.html export tương ứng ba HTML report. Giữ đuôi file gốc. Chưa được cung cấp hướng dẫn Moodle riêng; **sinh viên cần kiểm tra quy ước nộp này**.
 
